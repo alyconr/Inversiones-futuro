@@ -7,6 +7,7 @@ import { Theme, NavLink } from '../types';
 interface NavbarProps {
   theme: Theme;
   toggleTheme: () => void;
+  setView: (view: 'home' | 'privacy') => void;
 }
 
 const links: NavLink[] = [
@@ -16,31 +17,43 @@ const links: NavLink[] = [
   { label: 'Contacto', href: '#contacto' },
 ];
 
-const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
+const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme, setView }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleNavClick = (href: string) => {
+    setView('home');
+    setIsOpen(false);
+    // Give state time to update before hash navigation
+    setTimeout(() => {
+      window.location.hash = href;
+    }, 10);
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <button 
+            onClick={() => { setView('home'); window.scrollTo(0, 0); }}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
             <Building2 className="w-8 h-8 text-blue-700 dark:text-blue-400" />
             <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
               Inversiones<span className="text-blue-700 dark:text-blue-400">Futuro</span>
             </span>
-          </div>
+          </button>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {links.map((link) => (
-              <a
+              <button
                 key={link.href}
-                href={link.href}
+                onClick={() => handleNavClick(link.href)}
                 className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-700 dark:hover:text-blue-400 transition-colors"
               >
                 {link.label}
-              </a>
+              </button>
             ))}
             
             <div className="flex items-center gap-4 ml-4">
@@ -51,12 +64,12 @@ const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
               >
                 {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               </button>
-              <a
-                href="#contacto"
+              <button
+                onClick={() => handleNavClick('#contacto')}
                 className="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg hover:shadow-blue-500/20"
               >
                 Agendar asesoría
-              </a>
+              </button>
             </div>
           </div>
 
@@ -83,23 +96,21 @@ const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
           >
             <div className="px-4 pt-2 pb-6 space-y-1">
               {links.map((link) => (
-                <a
+                <button
                   key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="block px-3 py-4 text-base font-medium text-slate-600 dark:text-slate-300 hover:text-blue-700"
+                  onClick={() => handleNavClick(link.href)}
+                  className="block w-full text-left px-3 py-4 text-base font-medium text-slate-600 dark:text-slate-300 hover:text-blue-700"
                 >
                   {link.label}
-                </a>
+                </button>
               ))}
               <div className="pt-4">
-                <a
-                  href="#contacto"
-                  onClick={() => setIsOpen(false)}
+                <button
+                  onClick={() => handleNavClick('#contacto')}
                   className="block w-full text-center bg-blue-700 text-white px-5 py-3 rounded-lg text-base font-semibold"
                 >
                   Agendar asesoría
-                </a>
+                </button>
               </div>
             </div>
           </motion.div>
