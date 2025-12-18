@@ -12,38 +12,41 @@ const Scene: React.FC<SceneProps> = ({ theme }) => {
   const groupRef = useRef<THREE.Group>(null);
   const towerRefs = useRef<(THREE.Mesh | null)[]>([]);
 
-  // Simple towers representing high-rise buildings
+  // Edificios con velocidades de pulsación y alturas base distintas
   const buildings = [
-    { pos: [-1.8, -1, 0], scale: [0.8, 3.5, 0.8], color: theme === 'dark' ? '#1e293b' : '#f1f5f9', speed: 1.2 },
-    { pos: [0, -1.5, 0], scale: [1, 5, 1], color: theme === 'dark' ? '#0f172a' : '#cbd5e1', speed: 1.5 },
-    { pos: [1.8, -0.8, 0], scale: [0.7, 4.2, 0.7], color: theme === 'dark' ? '#334155' : '#e2e8f0', speed: 1.3 },
-    { pos: [0.8, -2, 1.5], scale: [0.5, 2.5, 0.5], color: theme === 'dark' ? '#1d4ed8' : '#3b82f6', speed: 1.8 },
-    { pos: [-0.8, -2, -1.5], scale: [0.6, 2, 0.6], color: theme === 'dark' ? '#d4af37' : '#94a3b8', speed: 1.1 },
+    { pos: [-2.2, -1, 0.5], scale: [0.8, 3.8, 0.8], color: theme === 'dark' ? '#1e293b' : '#f1f5f9', speed: 0.8 },
+    { pos: [0, -1.5, 0], scale: [1.2, 5.5, 1.2], color: theme === 'dark' ? '#0f172a' : '#cbd5e1', speed: 1.2 },
+    { pos: [2.2, -0.8, -0.5], scale: [0.9, 4.5, 0.9], color: theme === 'dark' ? '#334155' : '#e2e8f0', speed: 1.0 },
+    { pos: [1, -2, 2], scale: [0.5, 2.8, 0.5], color: theme === 'dark' ? '#1d4ed8' : '#3b82f6', speed: 1.5 },
+    { pos: [-1.2, -2, -2], scale: [0.6, 2.2, 0.6], color: theme === 'dark' ? '#d4af37' : '#94a3b8', speed: 0.7 },
   ];
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
 
     if (groupRef.current) {
-      // Subtle autonomous floating for the whole group
-      groupRef.current.rotation.y = Math.sin(time * 0.2) * 0.1;
+      // Rotación autónoma constante del horizonte
+      groupRef.current.rotation.y = time * 0.15;
       
-      // Parallax effect with mouse (optional but enhanced with autonomous motion)
-      const targetX = (state.mouse.x * state.viewport.width) / 12;
-      const targetY = (state.mouse.y * state.viewport.height) / 12;
-      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.05);
-      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY - 0.5, 0.05);
+      // Movimiento de balanceo suave
+      groupRef.current.rotation.z = Math.sin(time * 0.5) * 0.02;
     }
 
-    // Autonomous animation for each building
+    // Animación individual de cada torre
     towerRefs.current.forEach((mesh, i) => {
       if (mesh) {
         const b = buildings[i];
-        // Vertical pulsing/floating
-        mesh.position.y = b.pos[1] + Math.sin(time * b.speed + i) * 0.15;
-        // Subtle scaling effect to simulate "dynamic construction"
-        const scaleFactor = 1 + Math.sin(time * 0.5 + i) * 0.02;
-        mesh.scale.set(1, scaleFactor, 1);
+        // Pulsación vertical (flotación)
+        mesh.position.y = b.pos[1] + Math.sin(time * b.speed + i) * 0.2;
+        
+        // Efecto de "respiración" en la escala (crecimiento sutil)
+        const s = 1 + Math.sin(time * 0.8 + i) * 0.03;
+        mesh.scale.set(s, s, s);
+
+        // Brillo intermitente para la torre acentuada en modo oscuro
+        if (theme === 'dark' && i === 3 && mesh.material instanceof THREE.MeshStandardMaterial) {
+          mesh.material.emissiveIntensity = 0.5 + Math.sin(time * 2) * 0.3;
+        }
       }
     });
   });
@@ -62,44 +65,44 @@ const Scene: React.FC<SceneProps> = ({ theme }) => {
             roughness={0.1} 
             metalness={0.9}
             emissive={theme === 'dark' && i === 3 ? '#1d4ed8' : '#000000'}
-            emissiveIntensity={theme === 'dark' ? 0.6 : 0}
+            emissiveIntensity={0}
           />
-          {/* Windows details */}
-          <lineSegments position={[0, 0, 0]}>
+          {/* Bordes definidos para un look arquitectónico limpio */}
+          <lineSegments>
             <edgesGeometry args={[new THREE.BoxGeometry(...(b.scale as any))]} />
-            <lineBasicMaterial color={theme === 'dark' ? '#475569' : '#94a3b8'} opacity={0.4} transparent />
+            <lineBasicMaterial color={theme === 'dark' ? '#475569' : '#94a3b8'} opacity={0.3} transparent />
           </lineSegments>
         </mesh>
       ))}
 
-      {/* Autonomous floating particles */}
-      {[...Array(15)].map((_, i) => (
-        <mesh 
-          key={`p-${i}`} 
-          position={[
-            Math.sin(i * 1.5) * 4, 
-            Math.cos(i * 2) * 3, 
-            Math.sin(i * 0.5) * 3
-          ]}
-          onUpdate={(self) => {
-            // Self-animation for particles
-            const time = Date.now() * 0.001;
-            self.position.y += Math.sin(time + i) * 0.005;
-          }}
-        >
-          <sphereGeometry args={[0.03, 8, 8]} />
-          <meshBasicMaterial color={theme === 'dark' ? '#3b82f6' : '#d4af37'} transparent opacity={0.6} />
-        </mesh>
-      ))}
+      {/* Partículas flotantes autónomas (nodos de inversión/futuro) */}
+      {[...Array(20)].map((_, i) => {
+        const angle = (i / 20) * Math.PI * 2;
+        const radius = 3.5 + Math.random() * 2;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        const y = (Math.random() - 0.5) * 5;
 
-      {/* Ground plane placeholder */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.5, 0]}>
-        <circleGeometry args={[6, 64]} />
+        return (
+          <mesh key={`p-${i}`} position={[x, y, z]}>
+            <sphereGeometry args={[0.04, 8, 8]} />
+            <meshBasicMaterial 
+              color={i % 2 === 0 ? '#3b82f6' : '#d4af37'} 
+              transparent 
+              opacity={0.6} 
+            />
+          </mesh>
+        );
+      })}
+
+      {/* Suelo reflectante sutil */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.8, 0]}>
+        <circleGeometry args={[8, 64]} />
         <meshStandardMaterial 
           color={theme === 'dark' ? '#0f172a' : '#ffffff'} 
           transparent 
-          opacity={0.2}
-          roughness={1}
+          opacity={0.1}
+          roughness={0.1}
         />
       </mesh>
     </group>

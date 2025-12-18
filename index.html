@@ -21,51 +21,22 @@
       })();
     </script>
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              corporate: {
-                blue: '#0F172A',
-                gold: '#D4AF37',
-                accent: '#1D4ED8',
-              }
-            },
-            fontFamily: {
-              sans: ['Inter', 'system-ui', 'sans-serif'],
-            }
-          }
-        }
-      }
-    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-        transition: background-color 0.3s ease, color 0.3s ease;
+    <script type="importmap">
+    {
+      "imports": {
+        "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+        "@react-three/drei": "https://esm.sh/@react-three/drei@^10.7.7",
+        "@react-three/fiber": "https://esm.sh/@react-three/fiber@^9.4.2",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react": "https://esm.sh/react@^19.2.3",
+        "three": "https://esm.sh/three@^0.182.0",
+        "lucide-react": "https://esm.sh/lucide-react@^0.561.0"
       }
-      .scroll-smooth {
-        scroll-behavior: smooth;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
-    "@react-three/drei": "https://esm.sh/@react-three/drei@^10.7.7",
-    "@react-three/fiber": "https://esm.sh/@react-three/fiber@^9.4.2",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "three": "https://esm.sh/three@^0.182.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.561.0"
-  }
-}
-</script>
-</head>
+    }
+    </script>
+  </head>
   <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
     <div id="root"></div>
   </body>
