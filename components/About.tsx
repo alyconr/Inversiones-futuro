@@ -40,7 +40,7 @@ const About: React.FC = () => {
             <h4 className="font-bold text-slate-900 dark:text-white">Transparencia</h4>
             <p className="text-sm text-slate-500">Cero costos ocultos en nuestras gestiones.</p>
           </div>
-          <div className="border-l-4 border-gold pl-4" style={{ borderColor: '#D4AF37' }}>
+          <div className="border-l-4 border-corporate-gold pl-4">
             <h4 className="font-bold text-slate-900 dark:text-white">Excelencia</h4>
             <p className="text-sm text-slate-500">Servicio boutique personalizado.</p>
           </div>
