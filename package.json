@@ -1,3 +1,4 @@
+
 {
   "name": "inversiones-futuro-landing",
   "private": true,
@@ -15,7 +16,6 @@
     "lucide-react": "^0.292.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^7.11.0",
     "three": "^0.158.0"
   },
   "devDependencies": {
