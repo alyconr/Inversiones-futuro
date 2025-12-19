@@ -1,21 +1,18 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
-interface PrivacyPolicyProps {
-  onBack: () => void;
-}
-
-const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
+const PrivacyPolicy: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto">
-      <button 
-        onClick={onBack}
-        className="mb-8 flex items-center gap-2 text-blue-700 dark:text-blue-400 font-semibold hover:gap-3 transition-all"
+      <Link 
+        to="/inicio"
+        className="mb-8 inline-flex items-center gap-2 text-blue-700 dark:text-blue-400 font-semibold hover:gap-3 transition-all"
       >
         <ArrowLeft className="w-5 h-5" />
         Regresar al Inicio
-      </button>
+      </Link>
 
       <div className="bg-white dark:bg-slate-900/40 p-8 md:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
         <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">Política de Tratamiento de Datos Personales</h2>

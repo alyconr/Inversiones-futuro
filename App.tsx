@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero3D from './components/Hero3D';
 import Services from './components/Services';
@@ -10,7 +11,49 @@ import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
 import { Theme } from './types';
 
-type View = 'home' | 'privacy';
+// Componente para manejar el scroll automático basado en la ruta
+const ScrollToSection: React.FC = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (pathname === '/inicio') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const sectionId = pathname.substring(1); // remover el '/'
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [pathname]);
+
+  return null;
+};
+
+const HomePage: React.FC<{ theme: Theme }> = ({ theme }) => (
+  <>
+    <ScrollToSection />
+    <section id="inicio">
+      <Hero3D theme={theme} />
+    </section>
+
+    <section id="servicios" className="py-20 px-4">
+      <Services />
+    </section>
+
+    <section id="nosotros" className="py-20 px-4 bg-slate-100 dark:bg-slate-900/50">
+      <About />
+    </section>
+
+    <section id="beneficios" className="py-20 px-4">
+      <Features />
+    </section>
+
+    <section id="contacto" className="py-20 px-4 bg-slate-100 dark:bg-slate-900/50">
+      <ContactForm />
+    </section>
+  </>
+);
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -18,8 +61,6 @@ const App: React.FC = () => {
     if (stored) return stored;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
-
-  const [view, setView] = useState<View>('home');
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -31,55 +72,31 @@ const App: React.FC = () => {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Scroll to top on view change
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [view]);
-
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  const navigateTo = (newView: View) => {
-    setView(newView);
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar theme={theme} toggleTheme={toggleTheme} setView={navigateTo} />
-      
-      <main className="flex-grow">
-        {view === 'home' ? (
-          <>
-            <section id="inicio">
-              <Hero3D theme={theme} />
-            </section>
+    <BrowserRouter>
+      <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+        <Navbar theme={theme} toggleTheme={toggleTheme} />
+        
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Navigate to="/inicio" replace />} />
+            <Route path="/inicio" element={<HomePage theme={theme} />} />
+            <Route path="/servicios" element={<HomePage theme={theme} />} />
+            <Route path="/nosotros" element={<HomePage theme={theme} />} />
+            <Route path="/contacto" element={<HomePage theme={theme} />} />
+            <Route path="/politica-de-privacidad" element={<div className="py-20 px-4"><PrivacyPolicy /></div>} />
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/inicio" replace />} />
+          </Routes>
+        </main>
 
-            <section id="servicios" className="py-20 px-4">
-              <Services />
-            </section>
-
-            <section id="nosotros" className="py-20 px-4 bg-slate-100 dark:bg-slate-900/50">
-              <About />
-            </section>
-
-            <section id="beneficios" className="py-20 px-4">
-              <Features />
-            </section>
-
-            <section id="contacto" className="py-20 px-4 bg-slate-100 dark:bg-slate-900/50">
-              <ContactForm />
-            </section>
-          </>
-        ) : (
-          <section className="py-20 px-4">
-            <PrivacyPolicy onBack={() => setView('home')} />
-          </section>
-        )}
-      </main>
-
-      <Footer setView={navigateTo} />
-    </div>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 };
 
